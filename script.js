@@ -14,29 +14,29 @@ let fields = [
 
   function render() {
     const content = document.getElementById('content');
-    content.innerHTML = ''; // Clear previous content
-
-    const table = document.createElement('table');
-
+    let tableHTML = '<table>';
+  
     for (let i = 0; i < 3; i++) {
-      const row = document.createElement('tr');
-
+      tableHTML += '<tr>';
+  
       for (let j = 0; j < 3; j++) {
-        const cell = document.createElement('td');
         const index = i * 3 + j;
-
+        tableHTML += '<td>';
+  
         // Check the value in the fields array and set the appropriate symbol
         if (fields[index] === 'circle') {
-          cell.textContent = 'O';
+          tableHTML += 'O';
         } else if (fields[index] === 'cross') {
-          cell.textContent = 'X';
+          tableHTML += 'X';
         }
-
-        row.appendChild(cell);
+  
+        tableHTML += '</td>';
       }
-
-      table.appendChild(row);
+  
+      tableHTML += '</tr>';
     }
-
-    content.appendChild(table);
+  
+    tableHTML += '</table>';
+    content.innerHTML = tableHTML;
   }
+  

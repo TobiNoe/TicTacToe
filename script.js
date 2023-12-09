@@ -1,47 +1,78 @@
 let fields = [
-    null,
-    'circle',
-    'circle',
-    null,
-    null,
-    'cross',
-    'cross',
-    null,
-    null
-  ];
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
+];
 
-  function init() {
-    render();
-  }
-  
+let currentPlayer = 'circle'; // Startspieler
 
-  function render() {
-    const content = document.getElementById('content');
-    let tableHTML = '<table>';
-  
-    for (let i = 0; i < 3; i++) {
-      tableHTML += '<tr>';
-  
-      for (let j = 0; j < 3; j++) {
-        const index = i * 3 + j;
-        tableHTML += '<td>';
-  
-        // Check the value in the fields array and set the appropriate symbol
-        if (fields[index] === 'circle') {
-          tableHTML += generateAnimatedCircle();
-        } else if (fields[index] === 'cross') {
-          tableHTML += generateAnimatedCross();
-        }
-  
-        tableHTML += '</td>';
-      }
-  
-      tableHTML += '</tr>';
+function init() {
+  render();
+}
+
+function render() {
+  const content = document.getElementById('content');
+  let tableHTML = '<table>';
+
+  for (let i = 0; i < 3; i++) {
+    tableHTML += '<tr>';
+
+    for (let j = 0; j < 3; j++) {
+      const index = i * 3 + j;
+      tableHTML += '<td onclick="handleCellClick(' + index + ')" id="cell-' + index + '">';
+      /* // Check the value in the fields array and set the appropriate symbol
+      if (fields[index] === 'circle') {
+        tableHTML += generateAnimatedCircle();
+      } else if (fields[index] === 'cross') {
+        tableHTML += generateAnimatedCross();
+      } */
+      tableHTML += '</td>';
     }
-  
-    tableHTML += '</table>';
-    content.innerHTML = tableHTML;
+
+    tableHTML += '</tr>';
   }
+
+  tableHTML += '</table>';
+  content.innerHTML = tableHTML;
+}
+
+
+function handleCellClick(index) {
+  const cell = document.getElementById('cell-' + index);
+
+  // Überprüfe, ob das Zellen-Element bereits geklickt wurde
+  if (cell.getAttribute('data-clicked') === 'true') {
+    return;
+  }
+
+  // Markiere das Zellen-Element als geklickt
+  cell.setAttribute('data-clicked', 'true');
+
+  // Wechsele zwischen 'circle' und 'cross' im fields-Array
+  fields[index] = currentPlayer;
+  currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+
+  // Rendere nur das geklickte Zellen-Element neu
+  renderCell(index);
+}
+
+
+function renderCell(index) {
+  const cell = document.getElementById('cell-' + index);
+
+  // Rendere das Zellen-Element basierend auf dem fields-Array
+  if (fields[index] === 'circle') {
+    cell.innerHTML = generateAnimatedCircle();
+  } else if (fields[index] === 'cross') {
+    cell.innerHTML = generateAnimatedCross();
+  }
+}
   
 
   function generateAnimatedCircle() {

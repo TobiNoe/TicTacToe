@@ -74,12 +74,38 @@ function renderCell(index) {
     }
 
     const winner = checkWinner();
+    console.log('const winner: ' + winner);
     if (winner) {
-        alert('Spieler ' + winner + ' gewinnt!');
-        const winningCells = getWinningCells(winner);
+        console.log(winner + 'gewinnt!')
+        const winningCells = getWinningCombination();
+        console.log(winningCells);
         highlightWinningCells(winningCells);
         // Hier könntest du zusätzlichen Code für das Ende des Spiels hinzufügen
     }
+}
+
+
+function getWinningCombination() {
+  for (let i = 0; i < winningCombinations.length; i++) {
+      const [a, b, c] = winningCombinations[i]; // [0, 1, 2]
+      if (fields[a] === fields[b] && fields[b] === fields[c] && fields[a] !== null) {
+          return winningCombinations[i];
+      }
+  }
+  return null;
+}
+
+
+function checkWinner() {
+  for (const combination of winningCombinations) {
+      const [a, b, c] = combination;
+
+      if (fields[a] !== null && fields[a] === fields[b] && fields[a] === fields[c]) {
+          return fields[a]; // Der Spieler auf dieser Linie gewinnt
+      }
+  }
+
+  return null; // Kein Gewinner gefunden
 }
 
 
@@ -161,6 +187,9 @@ function getWinningCells(winner) {
 
     return null; // Kein Gewinner gefunden
 }
+
+
+
 
 
 function generateAnimatedCircle() {

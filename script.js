@@ -79,7 +79,7 @@ function renderCell(index) {
         console.log(winner + 'gewinnt!')
         const winningCells = getWinningCombination();
         console.log(winningCells);
-        highlightWinningCells(winningCells);
+        drawWinningLine(getWinningCombination());
         // Hier könntest du zusätzlichen Code für das Ende des Spiels hinzufügen
     }
 }
@@ -109,71 +109,33 @@ function checkWinner() {
 }
 
 
-function getWinningCells(winner) {
-    // Horizontale Linien
-    for (let i = 0; i < 9; i += 3) {
-      if (fields[i] === winner && fields[i] === fields[i + 1] && fields[i] === fields[i + 2]) {
-        return [i, i + 1, i + 2];
-      }
-    }
-  
-    // Vertikale Linien
-    for (let i = 0; i < 3; i++) {
-      if (fields[i] === winner && fields[i] === fields[i + 3] && fields[i] === fields[i + 6]) {
-        return [i, i + 3, i + 6];
-      }
-    }
-  
-    // Diagonale Linien
-    if (fields[0] === winner && fields[0] === fields[4] && fields[0] === fields[8]) {
-      return [0, 4, 8];
-    }
-  
-    if (fields[2] === winner && fields[2] === fields[4] && fields[2] === fields[6]) {
-      return [2, 4, 6];
-    }
-  
-    return [];
-  }
-  
+function drawWinningLine(combination) {
+  const lineColor = '#ffffff';
+  const lineWidth = 5;
 
-  function highlightWinningCells(winningCells) {
-    const overlay = document.createElement('div');
-    overlay.className = 'winning-line';
-  
-    const cellElements = winningCells.map(index => document.getElementById('cell-' + index));
-  
-    const minX = Math.min(...cellElements.map(cell => cell.getBoundingClientRect().left));
-    const minY = Math.min(...cellElements.map(cell => cell.getBoundingClientRect().top));
-    const maxX = Math.max(...cellElements.map(cell => cell.getBoundingClientRect().right));
-    const maxY = Math.max(...cellElements.map(cell => cell.getBoundingClientRect().bottom));
-  
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-  
-    const angle = calculateAngle(cellElements[0].getBoundingClientRect(), cellElements[cellElements.length - 1].getBoundingClientRect());
-    const length = calculateLength(minX, minY, maxX, maxY);
-  
-    overlay.style.width = length + 'px';
-    overlay.style.height = '5px'; // Breite der Linie
-    overlay.style.backgroundColor = 'white';
-    overlay.style.transformOrigin = '0% 0%';
-    overlay.style.transform = 'rotate(' + angle + 'rad)';
-    overlay.style.position = 'absolute';
-    overlay.style.left = minX + 'px';
-    overlay.style.top = minY + 'px';
-  
-    document.getElementById('content').appendChild(overlay);
-  }
+  const startCell = document.querySelectorAll(`td`)[combination[0]];
+  const endCell = document.querySelectorAll(`td`)[combination[2]];
+  const startRect = startCell.getBoundingClientRect();
+  const endRect = endCell.getBoundingClientRect();
 
+  const contentRect = document.getElementById('content').getBoundingClientRect();
 
-  function calculateAngle(rect1, rect2) {
-    return Math.atan2(rect2.top - rect1.bottom, rect2.left - rect1.right);
-  }
-  
-  function calculateLength(minX, minY, maxX, maxY) {
-    return Math.hypot(maxX - minX, maxY - minY);
-  }
+  const lineLength = Math.sqrt(
+    Math.pow(endRect.left - startRect.left, 2) + Math.pow(endRect.top - startRect.top, 2)
+  );
+  const lineAngle = Math.atan2(endRect.top - startRect.top, endRect.left - startRect.left);
+
+  const line = document.createElement('div');
+  line.style.position = 'absolute';
+  line.style.width = `${lineLength}px`;
+  line.style.height = `${lineWidth}px`;
+  line.style.backgroundColor = lineColor;
+  line.style.top = `${startRect.top + startRect.height / 2 - lineWidth / 2 - contentRect.top}px`;
+  line.style.left = `${startRect.left + startRect.width / 2 - contentRect.left}px`;
+  line.style.transform = `rotate(${lineAngle}rad)`;
+  line.style.transformOrigin = `top left`;
+  document.getElementById('content').appendChild(line);
+}
   
 
   function checkWinner() {

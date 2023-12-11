@@ -116,15 +116,37 @@ function isFinised() {
     const winningCells = getWinningCombination();
     console.log(winningCells);
     drawWinningLine(getWinningCombination());
+    toggleResetButton(false);
     // Hier könntest du zusätzlichen Code für das Ende des Spiels hinzufügen
   } else {
     if (fields.every(cell => cell !== null)) {
+      toggleResetButton(false);
       return 'draw'; // Alle Felder sind belegt, es gibt keinen Gewinner (Unentschieden)
     }
   }
-
 }
 
+
+function resetGame() {
+  fields = [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ];
+  currentPlayer = 'circle';
+  render();
+  toggleResetButton(true);
+}
+
+function toggleResetButton(condition) {
+  document.getElementById('resetButton').disabled = condition; 
+}
 
 function drawWinningLine(combination) {
   const lineColor = '#ffffff';

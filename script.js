@@ -1,96 +1,91 @@
 let fields = [
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null
 ];
 
 const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontale Reihen
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertikale Reihen
-    [0, 4, 8], [2, 4, 6]             // Diagonale Reihen
+  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontale Reihen
+  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertikale Reihen
+  [0, 4, 8], [2, 4, 6]             // Diagonale Reihen
 ];
 
 let currentPlayer = 'circle'; // Startspieler
 
 function init() {
-    render();
+  render();
 }
 
 function render() {
-    const content = document.getElementById('content');
-    let tableHTML = '<table>';
+  const content = document.getElementById('content');
+  let tableHTML = '<table>';
 
-    for (let i = 0; i < 3; i++) {
-        tableHTML += '<tr>';
+  for (let i = 0; i < 3; i++) {
+    tableHTML += '<tr>';
 
-        for (let j = 0; j < 3; j++) {
-            const index = i * 3 + j;
-            tableHTML += '<td onclick="handleCellClick(' + index + ')" id="cell-' + index + '">';
-            tableHTML += '</td>';
-        }
-
-        tableHTML += '</tr>';
+    for (let j = 0; j < 3; j++) {
+      const index = i * 3 + j;
+      tableHTML += '<td onclick="handleCellClick(' + index + ')" id="cell-' + index + '">';
+      tableHTML += '</td>';
     }
 
-    tableHTML += '</table>';
-    content.innerHTML = tableHTML;
+    tableHTML += '</tr>';
+  }
+
+  tableHTML += '</table>';
+  content.innerHTML = tableHTML;
 }
 
 
 function handleCellClick(index) {
-    const cell = document.getElementById('cell-' + index);
+  const cell = document.getElementById('cell-' + index);
 
-    // Überprüfe, ob das Zellen-Element bereits geklickt wurde
-    if (cell.getAttribute('data-clicked') === 'true') {
-        return;
-    }
+  // Überprüfe, ob das Zellen-Element bereits geklickt wurde
+  if (cell.getAttribute('data-clicked') === 'true') {
+    return;
+  }
 
-    // Markiere das Zellen-Element als geklickt
-    cell.setAttribute('data-clicked', 'true');
+  // Markiere das Zellen-Element als geklickt
+  cell.setAttribute('data-clicked', 'true');
 
-    // Wechsele zwischen 'circle' und 'cross' im fields-Array
-    fields[index] = currentPlayer;
-    currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
+  // Wechsele zwischen 'circle' und 'cross' im fields-Array
+  fields[index] = currentPlayer;
+  currentPlayer = currentPlayer === 'circle' ? 'cross' : 'circle';
 
-    // Rendere nur das geklickte Zellen-Element neu
-    renderCell(index);
+  // Rendere nur das geklickte Zellen-Element neu
+  renderCell(index);
 }
 
 
 function renderCell(index) {
-    const cell = document.getElementById('cell-' + index);
+  const cell = document.getElementById('cell-' + index);
 
-    // Rendere das Zellen-Element basierend auf dem fields-Array
-    if (fields[index] === 'circle') {
-        cell.innerHTML = generateAnimatedCircle();
-    } else if (fields[index] === 'cross') {
-        cell.innerHTML = generateAnimatedCross();
-    }
+  // Rendere das Zellen-Element basierend auf dem fields-Array
+  if (fields[index] === 'circle') {
+    cell.innerHTML = generateAnimatedCircle();
+  } else if (fields[index] === 'cross') {
+    cell.innerHTML = generateAnimatedCross();
+  }
 
-    const winner = checkWinner();
-    console.log('const winner: ' + winner);
-    if (winner) {
-        console.log(winner + 'gewinnt!')
-        const winningCells = getWinningCombination();
-        console.log(winningCells);
-        drawWinningLine(getWinningCombination());
-        // Hier könntest du zusätzlichen Code für das Ende des Spiels hinzufügen
-    }
+  const finish = isFinised();
+  if (finish) {
+    console.log(finish);
+  }
 }
 
 
 function getWinningCombination() {
   for (let i = 0; i < winningCombinations.length; i++) {
-      const [a, b, c] = winningCombinations[i]; // [0, 1, 2]
-      if (fields[a] === fields[b] && fields[b] === fields[c] && fields[a] !== null) {
-          return winningCombinations[i];
-      }
+    const [a, b, c] = winningCombinations[i]; // [0, 1, 2]
+    if (fields[a] === fields[b] && fields[b] === fields[c] && fields[a] !== null) {
+      return winningCombinations[i];
+    }
   }
   return null;
 }
@@ -103,14 +98,31 @@ function checkWinner() {
     if (fields[a] !== null && fields[a] === fields[b] && fields[a] === fields[c]) {
       return fields[a]; // Der Spieler auf dieser Linie gewinnt
     }
-  }
 
-  // Überprüfe auf ein Unentschieden
-  if (fields.every(cell => cell !== null)) {
-    return 'draw'; // Alle Felder sind belegt, es gibt keinen Gewinner (Unentschieden)
+
   }
 
   return null; // Kein Gewinner gefunden
+}
+
+
+function isFinised() {
+  // Überprüfe auf ein Unentschieden
+
+  const winner = checkWinner();
+  console.log('const winner: ' + winner);
+  if (winner) {
+    console.log(winner + ' gewinnt!')
+    const winningCells = getWinningCombination();
+    console.log(winningCells);
+    drawWinningLine(getWinningCombination());
+    // Hier könntest du zusätzlichen Code für das Ende des Spiels hinzufügen
+  } else {
+    if (fields.every(cell => cell !== null)) {
+      return 'draw'; // Alle Felder sind belegt, es gibt keinen Gewinner (Unentschieden)
+    }
+  }
+
 }
 
 
@@ -141,26 +153,10 @@ function drawWinningLine(combination) {
   line.style.transformOrigin = `top left`;
   document.getElementById('content').appendChild(line);
 }
-  
-
-  function checkWinner() {
-    for (const combination of winningCombinations) {
-        const [a, b, c] = combination;
-
-        if (fields[a] !== null && fields[a] === fields[b] && fields[a] === fields[c]) {
-            return fields[a]; // Der Spieler auf dieser Linie gewinnt
-        }
-    }
-
-    return null; // Kein Gewinner gefunden
-}
-
-
-
 
 
 function generateAnimatedCircle() {
-    const svgCode = `
+  const svgCode = `
       <svg width="70" height="70" xmlns="http://www.w3.org/2000/svg">
         <circle cx="35" cy="35" r="30" fill="none" stroke="#00B0EF" stroke-width="5" 
           stroke-dasharray="188.5" stroke-dashoffset="188.5">
@@ -169,12 +165,12 @@ function generateAnimatedCircle() {
       </svg>
     `;
 
-    return svgCode;
+  return svgCode;
 }
 
 
 function generateAnimatedCross() {
-    const svgCode = `
+  const svgCode = `
       <svg width="70" height="70" xmlns="http://www.w3.org/2000/svg">
         <line id="line1" x1="10" y1="10" x2="10" y2="10" stroke="#FFC000" stroke-width="5">
           <animate attributeName="x2" from="10" to="60" dur="0.25s" begin="0s" repeatCount="1" fill="freeze" />
@@ -187,5 +183,5 @@ function generateAnimatedCross() {
       </svg>
     `;
 
-    return svgCode;
+  return svgCode;
 }

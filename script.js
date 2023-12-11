@@ -98,11 +98,16 @@ function getWinningCombination() {
 
 function checkWinner() {
   for (const combination of winningCombinations) {
-      const [a, b, c] = combination;
+    const [a, b, c] = combination;
 
-      if (fields[a] !== null && fields[a] === fields[b] && fields[a] === fields[c]) {
-          return fields[a]; // Der Spieler auf dieser Linie gewinnt
-      }
+    if (fields[a] !== null && fields[a] === fields[b] && fields[a] === fields[c]) {
+      return fields[a]; // Der Spieler auf dieser Linie gewinnt
+    }
+  }
+
+  // Überprüfe auf ein Unentschieden
+  if (fields.every(cell => cell !== null)) {
+    return 'draw'; // Alle Felder sind belegt, es gibt keinen Gewinner (Unentschieden)
   }
 
   return null; // Kein Gewinner gefunden
